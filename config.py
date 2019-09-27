@@ -68,26 +68,32 @@ widget_defaults = dict(
     font='Ubuntu Bold',
     fontsize=14,
     foreground=text_color,
-    padding=4,
+    padding=2,
 )
 extension_defaults = widget_defaults.copy()
+spacing = 20
 
 screens = [
     Screen(
         top=bar.Bar(
             [
-                widget.GroupBox(disable_drag=True, highlight_method='text', inactive=text_color, padding=2, this_current_screen_border=highlight_color),
+                widget.Spacer(length=5),
+                widget.GroupBox(disable_drag=True, highlight_method='text', inactive=text_color, this_current_screen_border=highlight_color),
                 widget.Prompt(),
                 widget.Spacer(length=206),
                 widget.Clock(format='%m-%d-%Y %a %I:%M %p'),
                 widget.Spacer(),
                 widget.BatteryIcon(theme_path=icons + '/battery-icons'),
                 widget.Battery(format='{percent:2.0%}'),
-                widget.LaunchBar(progs=[[icons + '/up_arrow.png', scripts + '/increase_brightness.sh', 'Increase the screen brightness']]),
-                widget.Backlight(backlight_name='intel_backlight'),
-                widget.LaunchBar(progs=[[icons + '/down_arrow.png', scripts + '/decrease_brightness.sh', 'Decrease the screen brightness']]),
+                widget.Spacer(length=spacing),
+                widget.LaunchBar(progs=[[icons + '/north.png', scripts + '/increase_brightness.sh', 'Increase the screen brightness']]),
+                widget.Backlight(backlight_name='intel_backlight', format='{percent:2.0%}'),
+                widget.LaunchBar(progs=[[icons + '/south.png', scripts + '/decrease_brightness.sh', 'Decrease the screen brightness']]),
+                widget.Spacer(length=spacing),
                 widget.Volume(),
+                widget.Spacer(length=spacing),
                 widget.Wlan(interface='wlp1s0', format='{essid} {percent:2.0%}'),
+                widget.Spacer(length=5),
             ],
             27, background=background_color,
         ),
