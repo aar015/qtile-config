@@ -30,7 +30,11 @@ from libqtile.command import lazy
 from libqtile import layout, bar, widget
 from typing import List  # noqa: F401
 
-# Define some useful variables
+# Define some directories
+home = os.path.expanduser('~')
+config = home + '/.config/qtile'
+
+# Define keyboard variables
 mod = "mod4"
 shift = "shift"
 
@@ -53,12 +57,8 @@ keys = [
     Key([mod], "r", lazy.spawncmd()),
     Key([mod], "x", lazy.window.kill()),
     # Command to control screen
-    Key([mod], "u", lazy.spawn("increase_brightness.sh")),
-    Key([mod], "d", lazy.spawn("decrease_brightness.sh")),
-    # Control audio
-    Key([], "XF86AudioMute", lazy.spawn("amixer -q set Master toggle")),
-    Key([], "XF86AudioLowerVolume", lazy.spawn("amixer -c 0 sset Master 1- unmute")),
-    Key([], "XF86AudioRaiseVolume", lazy.spawn("amixer -c 0 sset Master 1+ unmute")),
+    Key([mod], "XF86AudioRaiseVolume", lazy.spawn(config + "/scripts/increase_brightness.sh")),
+    Key([mod], "XF86AudioLowerVolume", lazy.spawn(config + "/scripts/decrease_brightness.sh")),
     # Commands to control qtile
     Key([mod, shift], "r", lazy.restart()),
     Key([mod, shift], "q", lazy.shutdown()),
