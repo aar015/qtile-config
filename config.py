@@ -33,22 +33,17 @@ from typing import List  # noqa: F401
 # Define some directories
 home = os.path.expanduser('~')
 config = home + '/.config/qtile'
+icons = config + '/icons'
+scripts = config + '/scripts'
 
 # Define keyboard variables
 mod = "mod4"
 shift = "shift"
 
 # Define color
-text = 'FFFFFF'
-focus = '215578'
-
-# Define some functions
-def increase_brightness():
-    @lazy.function
-    def __inner(qtile):
-        subprocess.Popen(['/usr/bin/sh', home + '/.config/qtile/scripts/increase_brightness.sh'])
-        lazy.spawncmd()
-    return __inner
+text_color = 'ebf8ff'
+highlight_color = '46b0db'
+background_color = '020709'
 
 keys = [
     # Spawn commands
@@ -57,8 +52,8 @@ keys = [
     Key([mod], "r", lazy.spawncmd()),
     Key([mod], "x", lazy.window.kill()),
     # Command to control screen
-    Key([mod], "XF86AudioRaiseVolume", lazy.spawn(config + "/scripts/increase_brightness.sh")),
-    Key([mod], "XF86AudioLowerVolume", lazy.spawn(config + "/scripts/decrease_brightness.sh")),
+    Key([mod], "XF86AudioRaiseVolume", lazy.spawn(scripts + '/increase_brightness.sh')),
+    Key([mod], "XF86AudioLowerVolume", lazy.spawn(scripts + '/decrease_brightness.sh')),
     # Commands to control qtile
     Key([mod, shift], "r", lazy.restart()),
     Key([mod, shift], "q", lazy.shutdown()),
@@ -66,13 +61,13 @@ keys = [
 
 groups = [Group(i) for i in ['Kodi', 'Books', 'Spotify', 'Diagnostics']]
 
-layouts = [
-    layout.Max(),
-]
+layouts = [layout.Max()]
 
 widget_defaults = dict(
-        font='Ubuntu Bold',
-    fontsize=16,
+    background=background_color,
+    font='Ubuntu Bold',
+    fontsize=14,
+    foreground=text_color,
     padding=4,
 )
 extension_defaults = widget_defaults.copy()
@@ -81,18 +76,20 @@ screens = [
     Screen(
         top=bar.Bar(
             [
-                widget.GroupBox(disable_drag=True, highlight_method='text', inactive=text, padding=2, this_current_screen_border=focus),
+                widget.GroupBox(disable_drag=True, highlight_method='text', inactive=text_color, padding=2, this_current_screen_border=highlight_color),
                 widget.Prompt(),
                 widget.Spacer(length=206),
                 widget.Clock(format='%m-%d-%Y %a %I:%M %p'),
                 widget.Spacer(),
-                widget.BatteryIcon(),
-                widget.Battery(format='{percent:2.0%}', discharge_char=' '),
-                widget.Backlight(backlight_name='intel_backlight', change_command='echo 0 | sudo tee /sys/class/backlight/intel_backlight/brightness'),
+                widget.BatteryIcon(theme_path=icons + '/battery-icons'),
+                widget.Battery(format='{percent:2.0%}'),
+                widget.LaunchBar(progs=[[icons + '/up_arrow.png', scripts + '/increase_brightness.sh', 'Increase the screen brightness']]),
+                widget.Backlight(backlight_name='intel_backlight'),
+                widget.LaunchBar(progs=[[icons + '/down_arrow.png', scripts + '/decrease_brightness.sh', 'Decrease the screen brightness']]),
                 widget.Volume(),
                 widget.Wlan(interface='wlp1s0', format='{essid} {percent:2.0%}'),
             ],
-            29,
+            27, background=background_color,
         ),
     ),
 ]
