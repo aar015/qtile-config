@@ -27,7 +27,7 @@
 import os, subprocess
 from libqtile.config import Key, Screen, Group, Drag, Click
 from libqtile.command import lazy
-from libqtile import layout, bar, widget
+from libqtile import layout, bar, widget, hook
 from typing import List  # noqa: F401
 
 # Define some directories
@@ -49,8 +49,15 @@ keys = [
     # Spawn commands
     Key([mod], "k", lazy.spawn("kodi")),
     Key([mod], "t", lazy.spawn("xterm")),
+    Key([mod], 's', lazy.spawn('spotify')),
+    Key([mod], 'b', lazy.spawn('com.github.babluboy.bookworm')),
+    Key([mod], 'd', lazy.spawn('xterm -e gotop')),
+    # Window commands
     Key([mod], "r", lazy.spawncmd()),
     Key([mod], "x", lazy.window.kill()),
+    # Command to control audio
+    Key([], "XF86AudioRaiseVolume", lazy.spawn(scripts + '/increase_sound.sh')),
+    Key([], "XF86AudioLowerVolume", lazy.spawn(scripts + '/decrease_sound.sh')),
     # Command to control screen
     Key([mod], "XF86AudioRaiseVolume", lazy.spawn(scripts + '/increase_brightness.sh')),
     Key([mod], "XF86AudioLowerVolume", lazy.spawn(scripts + '/decrease_brightness.sh')),
@@ -80,22 +87,29 @@ screens = [
                 widget.Spacer(length=5),
                 widget.GroupBox(disable_drag=True, highlight_method='text', inactive=text_color, this_current_screen_border=highlight_color),
                 widget.Prompt(),
-                widget.Spacer(length=206),
-                widget.Clock(format='%m-%d-%Y %a %I:%M %p'),
+                widget.Spacer(length=315),
+                widget.Clock(format='%a %I:%M %p'),
                 widget.Spacer(),
                 widget.BatteryIcon(theme_path=icons + '/battery-icons'),
                 widget.Battery(format='{percent:2.0%}'),
                 widget.Spacer(length=spacing),
+                widget.Image(filename=icons + '/brightness.png'),
+                widget.Sep(foreground=highlight_color, padding=5, linewidth=2, size_percent=75),
                 widget.LaunchBar(progs=[[icons + '/north.png', scripts + '/increase_brightness.sh', 'Increase the screen brightness']]),
                 widget.Backlight(backlight_name='intel_backlight', format='{percent:2.0%}'),
                 widget.LaunchBar(progs=[[icons + '/south.png', scripts + '/decrease_brightness.sh', 'Decrease the screen brightness']]),
                 widget.Spacer(length=spacing),
+                widget.Image(filename=icons + '/sound.png'),
+                widget.Sep(foreground=highlight_color, padding=5, linewidth=2, size_percent=75),
+                widget.LaunchBar(progs=[[icons + '/north.png', scripts + '/increase_sound.sh', 'Increase the sound']]),
                 widget.Volume(),
+                widget.LaunchBar(progs=[[icons + '/south.png', scripts + '/decrease_sound.sh', 'Decrease the sound']]),
                 widget.Spacer(length=spacing),
+                widget.Systray(),
                 widget.Wlan(interface='wlp1s0', format='{essid} {percent:2.0%}'),
                 widget.Spacer(length=5),
             ],
-            27, background=background_color,
+            26, background=background_color,
         ),
     ),
 ]
@@ -135,3 +149,7 @@ focus_on_window_activation = "smart"
 # We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
 # java that happens to be on java's whitelist.
 wmname = "LG3D"
+
+#@hook.subscribe.startup_once
+#def autostart():
+    #subprocess.call(['nm-applet'])
